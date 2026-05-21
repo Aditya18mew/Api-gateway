@@ -3,6 +3,7 @@ const express=require("express")
 const cookieParser=require("cookie-parser")
 const logger=require("./middleware/logger");
 const routes = require("./routes/routes");
+const limiter=require("./middleware/ratelimiter")
 
 
 const app=express();
@@ -10,6 +11,7 @@ const app=express();
 
 app.use(logger)
 app.use(cookieParser())
+app.use(limiter)
 app.use(routes)
 
 

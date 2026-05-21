@@ -1,5 +1,13 @@
 const logger=(req,res,next)=>{
-  console.log(`${req.method} ${req.url}`)
+   
+  const start=Date.now()
+
+  res.on("finish",()=>{
+    const end=Date.now()
+     console.log(
+         `${req.method} ${req.url} ${res.statusCode} ${end-start}ms`
+      )
+  })
   next();
 }
 
