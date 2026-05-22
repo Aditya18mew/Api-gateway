@@ -28,4 +28,16 @@ router.use("/signup",createProxyMiddleware({
     changeOrigin:true
 }))
 
+router.use("/health",async(req,res)=>{
+    const auth=await fetch(`${services.AUTH_SERVICE}/health`)
+    const user=await fetch(`${services.USER_SERVICE}/health`)
+    const product=await fetch(`${services.PRODUCT_SERVICE}/health`)
+
+    const authservicehealth= await auth.json()
+    const userservicehealth=await user.json()
+    const productserviehealth=await product.json()
+
+   return res.status(200).json({Auth_health_status:authservicehealth.status,User_health_status:userservicehealth.status,Product_health_status:productserviehealth})
+})
+
 module.exports=router

@@ -63,5 +63,10 @@ router.post("/login",async (req,res)=>{
     }
 })
 
+router.get("/health",(req,res)=>{
+
+  return res.json({status:"healthy"})
+})
+
 
 module.exports=router

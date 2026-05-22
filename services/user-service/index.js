@@ -12,6 +12,11 @@ app.get("/",(req,res)=>{
     })
 })
 
+app.get("/health",(req,res)=>{
+
+  return res.json({status:"healthy"})
+})
+
 app.listen(3001,()=>{
     console.log("server is listenting")
 })
