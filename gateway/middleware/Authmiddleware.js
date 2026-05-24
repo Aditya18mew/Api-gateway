@@ -3,8 +3,12 @@ require("dotenv").config()
 
 const ACCESS_TOKEN_SECRET=process.env.ACCESS_TOKEN_SECRET
 const REFRESH_TOKEN_SECRET=process.env.REFRESH_TOKEN_SECRET
+const isproduction=process.env.NODE_ENV==="production"
 
-const verifyuser=async (req,res,next)=>{
+const verifyuser=(req,res,next)=>{
+    if(req.user){
+        return next()
+    }
       const AccessToken=req.cookies.AccessToken
     if(!AccessToken){
         return res.status(401).json({success:false,message:"UnAuthorized:No token provided"})
@@ -21,7 +25,7 @@ const verifyuser=async (req,res,next)=>{
    } 
 }
 
-const refreshTokens=async (req,res,next)=>{
+const refreshTokens=(req,res,next)=>{
     const AccessToken=req.cookies.AccessToken
     if(AccessToken){
       return next()
@@ -41,17 +45,21 @@ const refreshTokens=async (req,res,next)=>{
         id:decoded._id,
         Email:decoded.Email
     },REFRESH_TOKEN_SECRET,{expiresIn:"7d"})
+
      
      res.cookie("AccessToken",newAccessToken,{
             maxAge:15*60*1000,
             httpOnly:true,
-            secure:false,
+            secure:isproduction,
          })
     res.cookie("RefreshToken",newRefreshToken,{
             maxAge:7*24*60*60*1000,
             httpOnly:true,
-            secure:false,
+            secure:isproduction,
          })
+     
+      req.user={id:decoded._id,email:decoded.Email}
+      req.Tokenrefreshed=true
             next()
    }catch(err){
        if(err.name==="TokenExpiredError"){
