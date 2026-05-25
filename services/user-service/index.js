@@ -14,7 +14,7 @@ app.get("/",(req,res)=>{
 
 app.get("/health",(req,res)=>{
 
-  return res.json({status:"healthy"})
+  return res.json({status:"healthy",uptime:process.uptime()})
 })
 
 app.listen(3001,()=>{
