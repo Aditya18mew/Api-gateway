@@ -1,7 +1,7 @@
 const express=require("express")
 const services=require("../config/services")
 const {createProxyMiddleware}=require("http-proxy-middleware")
- const {verifyuser,refreshTokens}=require("../middleware/Authmiddleware") 
+ const {verifyuser,refreshTokens,logoutUser}=require("../middleware/Authmiddleware") 
  const authGuard=[refreshTokens,verifyuser]
  const {authlimiter}=require("../middleware/ratelimiter")
 
@@ -78,8 +78,10 @@ router.use("/login",authlimiter,createProxy(`${services.AUTH_SERVICE}/login`))
 
 router.use("/signup",authlimiter,createProxy(`${services.AUTH_SERVICE}/signup`))
 
+router.post("/logout",logoutUser)
 
-router.use("/health",async(req,res)=>{
+
+router.get("/health",async(req,res)=>{
     const checkservice= async (url)=>{
         try{
           const res=await fetch(`${url}/health`,{signal:AbortSignal.timeout(3000)})

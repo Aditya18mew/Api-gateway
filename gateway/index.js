@@ -4,6 +4,7 @@ const cookieParser=require("cookie-parser")
 const logger=require("./middleware/logger");
 const routes = require("./routes/routes");
 const {limiter}=require("./middleware/ratelimiter")
+require("./config/Redis")
 
 
 const app=express();
