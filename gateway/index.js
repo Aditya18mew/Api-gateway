@@ -5,11 +5,14 @@ const logger=require("./middleware/logger");
 const routes = require("./routes/routes");
 const {limiter}=require("./middleware/ratelimiter")
 require("./config/Redis")
-
+const cors=require("cors")
 
 const app=express();
 
-
+app.use(cors({
+    origin:"*",
+    credentials:false
+}))
 app.use(logger)
 app.use(cookieParser())
 app.use(limiter)
