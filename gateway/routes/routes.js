@@ -4,21 +4,59 @@ const {createProxyMiddleware}=require("http-proxy-middleware")
  const {verifyuser,refreshTokens,logoutUser}=require("../middleware/Authmiddleware") 
  const authGuard=[refreshTokens,verifyuser]
  const {authlimiter}=require("../middleware/ratelimiter")
+const createCircuitBreaker = require("../middleware/circuitbreaker")
 
 
 const router=express.Router()
 
-   const createProxy=(target)=>createProxyMiddleware({
+   const createProxy=(target)=>{
+
+    const proxy=createProxyMiddleware({
        target:target,
-    changeOrigin:true,
-    proxyTimeout:5000,
-    timeout:5000,
-    on:{
-        error:(err,req,res)=>{
-         return   res.status(502).json({error:"Service temporarily unavailable"})
+       changeOrigin:true,
+       proxyTimeout:5000,
+       timeout:5000,
+       on:{
+            error:(err,req,res)=>{
+                if(req.failure){
+                    req.failure(err)
+                }
+                if(!res.headersSent){
+                    res.status(502).json({error:"Service temporary unavailable"})
+                }
+            },
+            proxyRes:(proxyRes,req)=>{
+                if(req.done){
+                  if(proxyRes.statusCode>=500){
+                     req.failure(new Error(`Service Returned ${proxyRes.statusCode}`))
+                 }else{
+                req.done()
+                 }
+                }
+            }
         }
-    }
    })
+
+   const executeProxy=(req,res,next)=>{
+    return new Promise((resolve,reject)=>{
+        req.failure=reject;
+        req.done=resolve
+        proxy(req,res,next)
+    })
+   }
+
+    const breaker=createCircuitBreaker(executeProxy)
+
+    return async (req,res,next)=>{
+         try{
+            await breaker.fire(req,res,next)
+         }catch{
+             if(!res.headersSent){
+                res.status(503).json({error:`Service unavailable, Circuit open`})
+             }
+         }
+    }
+}
 
 
 /* router.use("/users",...authGuard,createProxyMiddleware({
