@@ -16,7 +16,13 @@ const router=express.Router()
        changeOrigin:true,
        proxyTimeout:5000,
        timeout:5000,
-       on:{
+       on:{ 
+            proxyReq:(proxyReq,req)=>{
+                proxyReq.removeHeader("x-user-id")
+                if(req.user){
+                    proxyReq.setHeader("x-user-id",req.user.id)
+                }
+            },
             error:(err,req,res)=>{
                 if(req.failure){
                     req.failure(err)

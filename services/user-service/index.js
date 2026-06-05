@@ -1,7 +1,10 @@
 const express=require("express")
+const {User,connectdb}=require("./utils/mongoosedb")
 
 
 const app=express()
+app.use(express.json())  /* if anything goes bad this line might be the cause */
+connectdb()
 
 
 app.get("/",(req,res)=>{

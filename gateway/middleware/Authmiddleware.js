@@ -45,12 +45,12 @@ const refreshTokens= async(req,res,next)=>{
     try{
     const decoded=jwt.verify(RefreshToken,REFRESH_TOKEN_SECRET)
     const newAccessToken=jwt.sign({
-        id:decoded._id,
+        id:decoded.id,
         Email:decoded.Email
     },ACCESS_TOKEN_SECRET,{expiresIn:"15m"})
 
     const newRefreshToken=jwt.sign({
-        id:decoded._id,
+        id:decoded.id,
         Email:decoded.Email
     },REFRESH_TOKEN_SECRET,{expiresIn:"7d"})
 
@@ -66,7 +66,7 @@ const refreshTokens= async(req,res,next)=>{
             secure:isproduction,
          })
      
-      req.user={id:decoded._id,email:decoded.Email}
+      req.user={id:decoded.id,email:decoded.Email}
       req.Tokenrefreshed=true
             next()
    }catch(err){
