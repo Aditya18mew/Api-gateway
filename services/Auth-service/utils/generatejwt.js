@@ -11,12 +11,14 @@ async function generatejwt(email){
    const user=await User.findOne({Email:email})
     const AccessToken=jwt.sign({
         id:user._id,
-        Email:user.Email
+        Email:user.Email,
+        role:user.role
     },ACCESS_TOKEN_SECRET,{expiresIn:"15m"})
 
     const RefreshToken=jwt.sign({
         id:user._id,
-        Email:user.Email
+        Email:user.Email,
+        role:user.role
     },REFRESH_TOKEN_SECRET,{expiresIn:"7d"})
 
 

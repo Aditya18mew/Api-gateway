@@ -7,6 +7,16 @@ const ACCESS_TOKEN_SECRET=process.env.ACCESS_TOKEN_SECRET
 const REFRESH_TOKEN_SECRET=process.env.REFRESH_TOKEN_SECRET
 const isproduction=process.env.NODE_ENV==="production"
 
+const verifyadmin=(req,res,next)=>{
+    if(!req.user){
+        return res.status(401).json({success:false,message:"Unauthorized"})
+    }
+    if(req.user.role!=="admin"){
+        return res.status(403).json({success:false,message:"Forbidden:Admins only"})
+    }
+    next()
+}
+
 const verifyuser=(req,res,next)=>{
     if(req.user){
         return next()
@@ -66,7 +76,7 @@ const refreshTokens= async(req,res,next)=>{
             secure:isproduction,
          })
      
-      req.user={id:decoded.id,email:decoded.Email}
+      req.user={id:decoded.id,email:decoded.Email,role:decoded.role}
       req.Tokenrefreshed=true
             next()
    }catch(err){
@@ -98,4 +108,4 @@ const logoutUser=async (req,res,next)=>{
 }
 
 
-module.exports={verifyuser,refreshTokens,logoutUser}
+module.exports={verifyuser,refreshTokens,logoutUser,verifyadmin}

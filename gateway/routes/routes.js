@@ -1,8 +1,9 @@
 const express=require("express")
 const services=require("../config/services")
 const {createProxyMiddleware}=require("http-proxy-middleware")
- const {verifyuser,refreshTokens,logoutUser}=require("../middleware/Authmiddleware") 
+ const {verifyuser,refreshTokens,logoutUser,verifyadmin}=require("../middleware/Authmiddleware") 
  const authGuard=[refreshTokens,verifyuser]
+ const adminGuard=[refreshTokens,verifyuser,verifyadmin]
  const {authlimiter}=require("../middleware/ratelimiter")
 const createCircuitBreaker = require("../middleware/circuitbreaker")
 
@@ -18,6 +19,7 @@ const router=express.Router()
        timeout:5000,
        on:{ 
             proxyReq:(proxyReq,req)=>{
+                console.log(req.user)
                 proxyReq.removeHeader("x-user-id")
                 if(req.user){
                     proxyReq.setHeader("x-user-id",req.user.id)
@@ -77,6 +79,7 @@ const router=express.Router()
     }
 })) */
 
+router.use("/admin/users",...adminGuard,createProxy(`${services.USER_SERVICE}/admin/users`))
 router.use("/users",...authGuard,createProxy(services.USER_SERVICE))
 
 
@@ -106,7 +109,7 @@ router.use("/products",...authGuard,createProxy(services.PRODUCT_SERVICE))
     }
 })) */
 
-router.use("/login",authlimiter,createProxy(`${services.AUTH_SERVICE}/login`))
+router.use("/login",/* authlimiter, */createProxy(`${services.AUTH_SERVICE}/login`))
 
 /* router.use("/signup",authlimiter,createProxyMiddleware({
     target:`${services.AUTH_SERVICE}/signup`,
@@ -120,7 +123,7 @@ router.use("/login",authlimiter,createProxy(`${services.AUTH_SERVICE}/login`))
     }
 })) */
 
-router.use("/signup",authlimiter,createProxy(`${services.AUTH_SERVICE}/signup`))
+router.use("/signup",/* authlimiter, */createProxy(`${services.AUTH_SERVICE}/signup`))
 
 router.post("/logout",logoutUser)
 
