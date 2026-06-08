@@ -19,10 +19,12 @@ const router=express.Router()
        timeout:5000,
        on:{ 
             proxyReq:(proxyReq,req)=>{
-                console.log(req.user)
                 proxyReq.removeHeader("x-user-id")
+                proxyReq.removeHeader("x-role")
+                proxyReq.removeHeader("x-gateway-secret")
                 if(req.user){
                     proxyReq.setHeader("x-user-id",req.user.id)
+                    proxyReq.setHeader("x-role",req.user.role)
                 }
             },
             error:(err,req,res)=>{
@@ -109,7 +111,7 @@ router.use("/products",...authGuard,createProxy(services.PRODUCT_SERVICE))
     }
 })) */
 
-router.use("/login",/* authlimiter, */createProxy(`${services.AUTH_SERVICE}/login`))
+router.use("/login",authlimiter,createProxy(`${services.AUTH_SERVICE}/login`))
 
 /* router.use("/signup",authlimiter,createProxyMiddleware({
     target:`${services.AUTH_SERVICE}/signup`,
@@ -123,7 +125,7 @@ router.use("/login",/* authlimiter, */createProxy(`${services.AUTH_SERVICE}/logi
     }
 })) */
 
-router.use("/signup",/* authlimiter, */createProxy(`${services.AUTH_SERVICE}/signup`))
+router.use("/signup",authlimiter,createProxy(`${services.AUTH_SERVICE}/signup`))
 
 router.post("/logout",logoutUser)
 
