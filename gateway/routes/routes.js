@@ -1,3 +1,4 @@
+require("dotenv").config()
 const express=require("express")
 const services=require("../config/services")
 const {createProxyMiddleware}=require("http-proxy-middleware")
@@ -6,6 +7,8 @@ const {createProxyMiddleware}=require("http-proxy-middleware")
  const adminGuard=[refreshTokens,verifyuser,verifyadmin]
  const {authlimiter}=require("../middleware/ratelimiter")
 const createCircuitBreaker = require("../middleware/circuitbreaker")
+
+const INTERNAL_SECRET=process.env.INTERNAL_SECRET
 
 
 const router=express.Router()
@@ -25,6 +28,7 @@ const router=express.Router()
                 if(req.user){
                     proxyReq.setHeader("x-user-id",req.user.id)
                     proxyReq.setHeader("x-role",req.user.role)
+                    proxyReq.setHeader("x-internal-secret",INTERNAL_SECRET)
                 }
             },
             error:(err,req,res)=>{
