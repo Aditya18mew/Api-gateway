@@ -1,5 +1,15 @@
 const express=require("express")
 const {Product,connectdb}=require("./utils/mongoosedb")
+require("dotenv").config()
+
+const INTERNAL_SECRET=process.env.INTERNAL_SECRET
+
+const Internalcheck=(req,res,next)=>{
+   if(req.headers["x-internal-secret"]!==INTERNAL_SECRET){
+        return res.status(403).json({error:"Direct access not allowed"})
+    }
+    next();
+}
 
 
 const app=express()
@@ -7,10 +17,12 @@ app.use(express.json())
 
 connectdb()
 
-app.get("/",async (req,res)=>{
+
+
+app.get("/products",Internalcheck,async (req,res)=>{
     try{
    const products=await Product.find().select("title price")
-         res.json({
+      return  res.status(200).json({
         service:"products",
         products:products
     })
@@ -19,7 +31,25 @@ app.get("/",async (req,res)=>{
     }
 })
 
-app.post("/add", async (req, res) => {
+
+app.get("/products/:id",Internalcheck,async (req,res)=>{
+    try{
+   const product=await Product.findById(req.params.id)
+      return  res.status(200).json({
+        service:"product",
+        product:product
+    })
+    }catch{
+     return  res.status(500).json({Error:"failed to fetch products"})
+    }
+})
+
+
+
+app.post("/admin/products/add",Internalcheck ,async (req, res) => {
+     if(req.headers["x-role"]!=="admin"){
+        return res.status(403).json({error:"Admins only"})
+    }
   try {
     const { title, price } = req.body
     if (!title || price === undefined) {
@@ -31,47 +61,61 @@ app.post("/add", async (req, res) => {
     })
 
     await newProduct.save()
-    res.status(201).json({ message: "Product added", product: newProduct })
+   return res.status(201).json({ message: "Product added", product: newProduct })
   } catch (err) {
-    console.log(err)
-    res.status(500).json({ error: "Failed to add product" })
+    console.error(err)
+   return res.status(500).json({ error: "Failed to add product" })
   }
 })
  
-app.put("/:id", async (req, res) => {
+
+
+app.put("/admin/products/:id",Internalcheck ,async (req, res) => {
+         if(req.headers["x-role"]!=="admin"){
+        return res.status(403).json({error:"Admins only"})
+    }
   try {
     const { title, price } = req.body
     const updatedProduct = await Product.findByIdAndUpdate(
       req.params.id,
       { title, price },
-      { new: true, runValidators: true }
+     { returnDocument: 'after' }
     )
     if (!updatedProduct) {
       return res.status(404).json({ error: "Product not found" })
     }
-    res.json({ message: "Product updated", product: updatedProduct })
+   return res.json({ message: "Product updated", product: updatedProduct })
   } catch (err) {
-    console.log(err)
-    res.status(500).json({ error: "Failed to update product" })
+    console.error(err)
+   return res.status(500).json({ error: "Failed to update product" })
   }
 })
 
-app.delete("/:id", async (req, res) => {
+
+
+app.delete("/admin/products/:id",Internalcheck, async (req, res) => {
+      if(req.headers["x-role"]!=="admin"){
+        return res.status(403).json({error:"Admins only"})
+    }
   try {
     const deletedProduct = await Product.findByIdAndDelete(req.params.id)
     if (!deletedProduct) {
       return res.status(404).json({ error: "Product not found" })
     }
-    res.json({ message: "Product deleted", product: deletedProduct })
+   return res.json({ message: "Product deleted", product: deletedProduct })
   } catch (err) {
-    console.log(err)
-    res.status(500).json({ error: "Failed to delete product" })
+    console.error(err)
+   return res.status(500).json({ error: "Failed to delete product" })
   }
 })
+
+
 
 app.get("/health",(req,res)=>{
    return res.json({status:"healthy",uptime:process.uptime()})
 })
+
+
 
 app.listen(3002,()=>{
     console.log("product is on")

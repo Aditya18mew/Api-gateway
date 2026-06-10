@@ -4,17 +4,24 @@ require("dotenv").config()
 
 const INTERNAL_SECRET=process.env.INTERNAL_SECRET
 
+const Internalcheck=(req,res,next)=>{
+   if(req.headers["x-internal-secret"]!==INTERNAL_SECRET){
+        return res.status(403).json({error:"Direct access not allowed"})
+    }
+    next();
+}
+
 
 const app=express()
 app.use(express.json())  /* if anything goes bad this line might be the cause */
 connectdb()
 
 
-app.get("/admin/users",async (req,res)=>{
+app.get("/admin/users",Internalcheck,async (req,res)=>{
 
-    if(req.headers["x-internal-secret"]!==INTERNAL_SECRET){
+   /*  if(req.headers["x-internal-secret"]!==INTERNAL_SECRET){
         return res.status(403).json({error:"Direct access not allowed"})
-    }
+    } */
 
     if(req.headers["x-role"]!=="admin"){
         return res.status(403).json({error:"Admins only"})
@@ -30,12 +37,12 @@ app.get("/admin/users",async (req,res)=>{
 
 })
 
-app.get("/profile",async (req,res)=>{
+app.get("/users/profile",Internalcheck,async (req,res)=>{
 
-    if(req.headers["x-internal-secret"]!==INTERNAL_SECRET){
+   /*  if(req.headers["x-internal-secret"]!==INTERNAL_SECRET){
         return res.status(403).json({error:"Direct access not allowed"})
     }
-
+ */
     const userid=req.headers["x-user-id"]
 
     try{
@@ -47,12 +54,12 @@ app.get("/profile",async (req,res)=>{
     }
 })
 
-app.put("/profile",async (req,res)=>{
+app.put("/users/profile",Internalcheck,async (req,res)=>{
 
-    if(req.headers["x-Internal-secret"]!==INTERNAL_SECRET){
+   /*  if(req.headers["x-Internal-secret"]!==INTERNAL_SECRET){
         return res.status(403).json({error:"Direct access not allowed"})
     }
-
+ */
     const userid=req.headers["x-user-id"]
     const {name,phone}=req.body
     

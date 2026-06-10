@@ -86,7 +86,7 @@ const router=express.Router()
 })) */
 
 router.use("/admin/users",...adminGuard,createProxy(`${services.USER_SERVICE}/admin/users`))
-router.use("/users",...authGuard,createProxy(services.USER_SERVICE))
+router.use("/users",...authGuard,createProxy(`${services.USER_SERVICE}/users`))
 
 
 /* router.use("/products",...authGuard,createProxyMiddleware({
@@ -101,7 +101,8 @@ router.use("/users",...authGuard,createProxy(services.USER_SERVICE))
     }
 })) */
 
-router.use("/products",...authGuard,createProxy(services.PRODUCT_SERVICE))
+router.use("/admin/products",...adminGuard,createProxy(`${services.PRODUCT_SERVICE}/admin/products`))
+router.use("/products",...authGuard,createProxy(`${services.PRODUCT_SERVICE}/products`))
 
 /* router.use("/login",authlimiter,createProxyMiddleware({
     target:`${services.AUTH_SERVICE}/login`,
