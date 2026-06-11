@@ -1,11 +1,18 @@
+const  {envRequired,envOptional}=require("./config/config")
+envRequired()
+envOptional()
+
+
 
 const express=require("express")
 const cookieParser=require("cookie-parser")
 const logger=require("./middleware/logger");
 const routes = require("./routes/routes");
 const {limiter}=require("./middleware/ratelimiter")
+require("dotenv").config()
 require("./config/Redis")
 const cors=require("cors")
+
 
 const app=express();
 
@@ -27,6 +34,6 @@ app.use((err,req,res,next)=>{
     res.status(500).json({error:"Internal gateway error"})
 })
 
-app.listen(3000,()=>{
+app.listen(process.env.PORT || 3000,()=>{
     console.log("3000 is working")
 })

@@ -1,9 +1,13 @@
+const envRequired = require("./config/config")
+envRequired()
+
 
 
 const express=require("express")
 const cookieParser=require("cookie-parser")
 const routes=require("./routes/routes")
 const {connectdb} = require("./utils/mongoosedb")
+require("dotenv").config()
 
 
 
@@ -17,6 +21,6 @@ app.use(routes)
 
 
 
-app.listen(3003,()=>{
+app.listen( process.env.PORT || 3003,()=>{
     console.log("auth checking")
 })

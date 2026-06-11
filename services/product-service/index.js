@@ -1,5 +1,15 @@
+const envRequired = require("./config/config")
+envRequired()
+
+
+
+
+
+
+
 const express=require("express")
 const {Product,connectdb}=require("./utils/mongoosedb")
+
 require("dotenv").config()
 
 const INTERNAL_SECRET=process.env.INTERNAL_SECRET
@@ -117,6 +127,6 @@ app.get("/health",(req,res)=>{
 
 
 
-app.listen(3002,()=>{
+app.listen(process.env.PORT || 3002,()=>{
     console.log("product is on")
 })

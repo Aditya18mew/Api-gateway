@@ -1,5 +1,5 @@
 const mongoose=require("mongoose")
-
+require("dotenv").config()
 
 const UserSchema=mongoose.Schema({
     Email: {type:String,required:true},
@@ -15,7 +15,7 @@ const User=mongoose.model("user",UserSchema)
 
 async function connectdb(){
     try{
-   await mongoose.connect("mongodb://localhost:27017/Authservice")
+   await mongoose.connect(process.env.MONGO_DB_URL)
     }catch(err){
         console.log(err)
         process.exit(1)

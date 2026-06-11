@@ -24,7 +24,7 @@ const router=express.Router()
             proxyReq:(proxyReq,req)=>{
                 proxyReq.removeHeader("x-user-id")
                 proxyReq.removeHeader("x-role")
-                proxyReq.removeHeader("x-gateway-secret")
+                proxyReq.removeHeader("x-internal-secret")
                 if(req.user){
                     proxyReq.setHeader("x-user-id",req.user.id)
                     proxyReq.setHeader("x-role",req.user.role)

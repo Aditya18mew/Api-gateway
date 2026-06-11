@@ -1,3 +1,9 @@
+const envRequired = require("./config/config")
+
+envRequired()
+
+
+
 const express=require("express")
 const {User,connectdb}=require("./utils/mongoosedb")
 require("dotenv").config()
@@ -76,6 +82,6 @@ app.get("/health",(req,res)=>{
      return res.json({status:"healthy",uptime:process.uptime()})
 })
 
-app.listen(3001,()=>{
+app.listen(process.env.PORT || 3001 ,()=>{
     console.log("server is listenting")
 })
