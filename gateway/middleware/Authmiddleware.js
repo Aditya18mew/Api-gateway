@@ -27,6 +27,7 @@ const verifyuser=(req,res,next)=>{
     }
    try{
     const decoded=jwt.verify(AccessToken,ACCESS_TOKEN_SECRET)
+    console.log(decoded)
     req.user=decoded
     next()
    }catch(error){
@@ -56,12 +57,14 @@ const refreshTokens= async(req,res,next)=>{
     const decoded=jwt.verify(RefreshToken,REFRESH_TOKEN_SECRET)
     const newAccessToken=jwt.sign({
         id:decoded.id,
-        Email:decoded.Email
+        Email:decoded.Email,
+        role:decoded.role
     },ACCESS_TOKEN_SECRET,{expiresIn:"15m"})
 
     const newRefreshToken=jwt.sign({
         id:decoded.id,
-        Email:decoded.Email
+        Email:decoded.Email,
+        role:decoded.role
     },REFRESH_TOKEN_SECRET,{expiresIn:"7d"})
 
      
