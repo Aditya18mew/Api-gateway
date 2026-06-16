@@ -1,3 +1,4 @@
+require("dotenv").config()
 const  {envRequired,envOptional}=require("./config/config")
 envRequired()
 envOptional()
@@ -9,9 +10,9 @@ const cookieParser=require("cookie-parser")
 const logger=require("./middleware/logger");
 const routes = require("./routes/routes");
 const {limiter}=require("./middleware/ratelimiter")
-require("dotenv").config()
 require("./config/Redis")
 const cors=require("cors")
+const {runhealthcheck} = require("./utils/health")
 
 
 const app=express();
@@ -24,6 +25,8 @@ app.use(logger)
 app.use(cookieParser())
 app.use(limiter)
 app.use(routes)
+
+setInterval(runhealthcheck,15*1000)
 
 app.use((req,res)=>{
     res.status(404).json({error:`Route ${req.method} ${req.path} Not Found`})

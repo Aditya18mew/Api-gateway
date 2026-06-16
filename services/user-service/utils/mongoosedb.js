@@ -1,5 +1,5 @@
 const mongoose=require("mongoose")
-require("dotenv").config()
+
 
 const UserSchema=mongoose.Schema({
     Email: {type:String,required:true},

@@ -1,4 +1,4 @@
-require("dotenv").config()
+
 const required=[
     "ACCESS_TOKEN_SECRET",
     "REFRESH_TOKEN_SECRET",

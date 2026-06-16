@@ -1,4 +1,3 @@
-require("dotenv").config()
 const express=require("express")
 const services=require("../config/services")
 const {createProxyMiddleware}=require("http-proxy-middleware")
@@ -7,6 +6,7 @@ const {createProxyMiddleware}=require("http-proxy-middleware")
  const adminGuard=[refreshTokens,verifyuser,verifyadmin]
  const {authlimiter}=require("../middleware/ratelimiter")
 const createCircuitBreaker = require("../middleware/circuitbreaker")
+const {healthcheck} = require("../utils/health")
 
 const INTERNAL_SECRET=process.env.INTERNAL_SECRET
 
@@ -135,7 +135,7 @@ router.use("/signup",authlimiter,createProxy(`${services.AUTH_SERVICE}/signup`))
 router.post("/logout",logoutUser)
 
 
-router.get("/health",async(req,res)=>{
+/* router.get("/health",async(req,res)=>{
     const checkservice= async (url)=>{
         try{
           const res=await fetch(`${url}/health`,{signal:AbortSignal.timeout(3000)})
@@ -153,6 +153,12 @@ router.get("/health",async(req,res)=>{
     ])
     
     const allhealthy=auth.healthy && user.healthy && product.healthy
+   return res.status(allhealthy ? 200 :503).json({gateway:{status:"healthy",healthy:true,uptime:process.uptime()},services:{auth,user,product}})
+}) */
+
+router.get("/health",async (req,res)=>{
+    const [auth,user,product]=await healthcheck()
+     const allhealthy=auth.healthy && user.healthy && product.healthy
    return res.status(allhealthy ? 200 :503).json({gateway:{status:"healthy",healthy:true,uptime:process.uptime()},services:{auth,user,product}})
 })
 

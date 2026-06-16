@@ -1,3 +1,4 @@
+require("dotenv").config()
 const envRequired = require("./config/config")
 envRequired()
 
@@ -7,7 +8,6 @@ const express=require("express")
 const cookieParser=require("cookie-parser")
 const routes=require("./routes/routes")
 const {connectdb} = require("./utils/mongoosedb")
-require("dotenv").config()
 
 
 

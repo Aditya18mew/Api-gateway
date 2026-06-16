@@ -1,6 +1,5 @@
 const jwt=require("jsonwebtoken")
 const client=require("../config/Redis")
-require("dotenv").config()
 
 
 const ACCESS_TOKEN_SECRET=process.env.ACCESS_TOKEN_SECRET
@@ -27,7 +26,6 @@ const verifyuser=(req,res,next)=>{
     }
    try{
     const decoded=jwt.verify(AccessToken,ACCESS_TOKEN_SECRET)
-    console.log(decoded)
     req.user=decoded
     next()
    }catch(error){

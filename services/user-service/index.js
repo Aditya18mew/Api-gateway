@@ -1,3 +1,4 @@
+require("dotenv").config()
 const envRequired = require("./config/config")
 
 envRequired()
@@ -6,7 +7,7 @@ envRequired()
 
 const express=require("express")
 const {User,connectdb}=require("./utils/mongoosedb")
-require("dotenv").config()
+
 
 const INTERNAL_SECRET=process.env.INTERNAL_SECRET
 

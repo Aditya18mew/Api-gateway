@@ -1,4 +1,4 @@
-require("dotenv").config()
+
 const required=[
     "INTERNAL_SECRET",
     "MONGO_DB_URL"
