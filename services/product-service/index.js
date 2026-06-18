@@ -38,7 +38,7 @@ app.get("/products",Internalcheck,async (req,res)=>{
         products:products
     })
     }catch{
-       res.status(500).json({Error:"failed to fetch products"})
+      return res.status(500).json({Error:"failed to fetch products"})
     }
 })
 

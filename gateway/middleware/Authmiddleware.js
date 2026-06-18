@@ -70,11 +70,13 @@ const refreshTokens= async(req,res,next)=>{
             maxAge:15*60*1000,
             httpOnly:true,
             secure:isproduction,
+            sameSite:"strict"
          })
     res.cookie("RefreshToken",newRefreshToken,{
             maxAge:7*24*60*60*1000,
             httpOnly:true,
             secure:isproduction,
+            sameSite:"strict"
          })
      
       req.user={id:decoded.id,email:decoded.Email,role:decoded.role}

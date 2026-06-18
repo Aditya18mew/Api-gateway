@@ -13,6 +13,8 @@ const {limiter}=require("./middleware/ratelimiter")
 require("./config/Redis")
 const cors=require("cors")
 const {runhealthcheck} = require("./utils/health")
+const path=require("path")
+
 
 
 const app=express();
@@ -21,12 +23,18 @@ app.use(cors({
     origin:"*",
     credentials:false
 }))
+
 app.use(logger)
 app.use(cookieParser())
 app.use(limiter)
 app.use(routes)
 
 setInterval(runhealthcheck,15*1000)
+
+app.use(express.static(path.join(__dirname, "public")))
+app.get("/docs",(req,res)=>{
+    res.sendFile(path.join(__dirname,"public","docs.html"))
+})
 
 app.use((req,res)=>{
     res.status(404).json({error:`Route ${req.method} ${req.path} Not Found`})

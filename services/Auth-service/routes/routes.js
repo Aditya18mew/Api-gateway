@@ -17,15 +17,17 @@ router.post("/signup",async (req,res)=>{
             maxAge:15*60*1000,
             httpOnly:true,
             secure:false,
+            sameSite:"strict"
          })
          res.cookie("RefreshToken",RefreshToken,{
             maxAge:7*24*60*60*1000,
             httpOnly:true,
             secure:false,
+            sameSite:"strict"
          })
-          res.json({success:true,message:"sign-up successful"})
+        return  res.status(200).json({success:true,message:"sign-up successful"})
       }else{
-         res.status(409).json({success:false,message:`${email} already in use`})
+        return res.status(409).json({success:false,message:`${email} already in use`})
       }
        
     }catch(err){
@@ -38,26 +40,27 @@ router.post("/login",async (req,res)=>{
       const {email,password}=req.body
       const user=await User.findOne({Email:email})
       if(!user){
-        res.status(409).json({success:false,message:`${email} signup first`})
+      return res.status(409).json({success:false,message:`${email} signup first`})
       }
     const {success,AccessToken,RefreshToken}=await comparepassword(email,password,user.Password)
     if(success){
           res.cookie("AccessToken",AccessToken,{
             maxAge:15*60*1000,
             httpOnly:true,
-            secure:false
+            secure:false,
+            sameSite:"strict"
          })
           res.cookie("RefreshToken",RefreshToken,{
             maxAge:7*24*60*60*1000,
             httpOnly:true,
             secure:false,
+            sameSite:"strict"
          })
          
-              res.json({success:true,message:"login successful"})
+       return res.status(200).json({success:true,message:"login successful"})
     }else{
-        res.json({success:false,message:"Incorrect Password"})
+       return res.status(401).json({success:false,message:"Incorrect Password"})
     }
-       
     }catch(err){
         console.log(err)
     }
@@ -65,7 +68,7 @@ router.post("/login",async (req,res)=>{
 
 router.get("/health",(req,res)=>{
 
-  return res.json({status:"healthy",uptime:process.uptime()})
+  return res.status(200).json({status:"healthy",uptime:process.uptime()})
 })
 
 

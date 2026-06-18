@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>API Gateway — Docs</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0D1117;
+    --surface:   #161B22;
+    --surface2:  #1C2330;
+    --border:    #30363D;
+    --text:      #E6EDF3;
+    --muted:     #8B949E;
+    --teal:      #00D4AA;
+    --blue:      #4B9EFF;
+    --orange:    #FF9F43;
+    --red:       #FF6B6B;
+    --purple:    #BC8CFF;
+    --yellow:    #F0C27F;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    min-height: 100vh;
+    font-size: 14px;
+  }
+
+  /* ── Sidebar ── */
+  aside {
+    width: 260px;
+    min-height: 100vh;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+
+  .sidebar-header {
+    padding: 24px 20px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar-header h1 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--teal);
+    letter-spacing: -0.3px;
+  }
+
+  .sidebar-header p {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .version-badge {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 2px 8px;
+    background: rgba(0,212,170,0.12);
+    border: 1px solid rgba(0,212,170,0.3);
+    border-radius: 20px;
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--teal);
+  }
+
+  .sidebar-nav { padding: 12px 0; flex: 1; }
+
+  .nav-group { margin-bottom: 4px; }
+
+  .nav-group-label {
+    padding: 6px 20px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 20px;
+    cursor: pointer;
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .nav-item:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+  .nav-item.active { background: rgba(0,212,170,0.08); border-left-color: var(--teal); color: var(--text); }
+
+  .nav-method {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 5px;
+    border-radius: 3px;
+    min-width: 38px;
+    text-align: center;
+  }
+
+  .m-get    { background: rgba(0,212,170,0.15);  color: var(--teal);   }
+  .m-post   { background: rgba(75,158,255,0.15); color: var(--blue);   }
+  .m-put    { background: rgba(255,159,67,0.15); color: var(--orange); }
+  .m-delete { background: rgba(255,107,107,0.15);color: var(--red);    }
+
+  .sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  .status-dot {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--teal);
+    box-shadow: 0 0 6px var(--teal);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%,100% { opacity: 1; }
+    50%      { opacity: 0.4; }
+  }
+
+  /* ── Main ── */
+  main {
+    flex: 1;
+    padding: 32px 40px;
+    max-width: 860px;
+  }
+
+  .page-header {
+    margin-bottom: 36px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .page-header h2 {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+  }
+
+  .page-header p {
+    color: var(--muted);
+    margin-top: 8px;
+    line-height: 1.6;
+    font-size: 13px;
+  }
+
+  .tech-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .pill {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+
+  /* ── Section ── */
+  .section { margin-bottom: 40px; }
+
+  .section-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--muted);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── Endpoint Card ── */
+  .endpoint {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    transition: border-color 0.15s;
+  }
+
+  .endpoint:hover { border-color: #444D56; }
+  .endpoint.open  { border-color: #444D56; }
+
+  .endpoint-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .method-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 4px;
+    min-width: 60px;
+    text-align: center;
+    letter-spacing: 0.5px;
+  }
+
+  .badge-get    { background: rgba(0,212,170,0.15);  color: var(--teal);   border: 1px solid rgba(0,212,170,0.3);   }
+  .badge-post   { background: rgba(75,158,255,0.15); color: var(--blue);   border: 1px solid rgba(75,158,255,0.3);  }
+  .badge-put    { background: rgba(255,159,67,0.15); color: var(--orange); border: 1px solid rgba(255,159,67,0.3);  }
+  .badge-delete { background: rgba(255,107,107,0.15);color: var(--red);    border: 1px solid rgba(255,107,107,0.3); }
+
+  .endpoint-path {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    flex: 1;
+  }
+
+  .endpoint-summary {
+    font-size: 12px;
+    color: var(--muted);
+    flex: 2;
+  }
+
+  .endpoint-tags {
+    display: flex;
+    gap: 6px;
+  }
+
+  .tag {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .tag-auth  { background: rgba(255,159,67,0.12);  color: var(--orange); border: 1px solid rgba(255,159,67,0.2);  }
+  .tag-admin { background: rgba(255,107,107,0.12); color: var(--red);    border: 1px solid rgba(255,107,107,0.2); }
+  .tag-open  { background: rgba(0,212,170,0.10);   color: var(--teal);   border: 1px solid rgba(0,212,170,0.2);   }
+
+  .chevron {
+    color: var(--muted);
+    font-size: 12px;
+    transition: transform 0.2s;
+  }
+
+  .endpoint.open .chevron { transform: rotate(90deg); }
+
+  /* ── Endpoint Body ── */
+  .endpoint-body {
+    display: none;
+    border-top: 1px solid var(--border);
+    padding: 20px 18px;
+    background: var(--surface2);
+  }
+
+  .endpoint.open .endpoint-body { display: block; }
+
+  .body-section { margin-bottom: 20px; }
+  .body-section:last-child { margin-bottom: 0; }
+
+  .body-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .code-block {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    overflow-x: auto;
+    position: relative;
+  }
+
+  .code-block .key   { color: var(--purple); }
+  .code-block .str   { color: var(--yellow); }
+  .code-block .num   { color: var(--teal);   }
+  .code-block .bool  { color: var(--orange); }
+  .code-block .comm  { color: var(--muted);  }
+
+  .response-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .response-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 10px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+
+  .status-code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    min-width: 36px;
+  }
+
+  .s-2xx { color: var(--teal);   }
+  .s-4xx { color: var(--orange); }
+  .s-5xx { color: var(--red);    }
+
+  .response-desc { font-size: 12px; color: var(--muted); flex: 1; }
+  .response-body { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text); margin-top: 6px; }
+
+  .params-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+
+  .params-table th {
+    text-align: left;
+    padding: 8px 12px;
+    background: var(--bg);
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .params-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  .params-table tr:last-child td { border-bottom: none; }
+
+  .param-name {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--blue);
+    font-size: 12px;
+  }
+
+  .param-type {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--purple);
+    font-size: 11px;
+  }
+
+  .param-required {
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    background: rgba(255,107,107,0.12);
+    color: var(--red);
+    border: 1px solid rgba(255,107,107,0.2);
+  }
+
+  .param-optional {
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    background: rgba(139,148,158,0.12);
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  /* ── Try it out ── */
+  .try-section {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .try-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 10px;
+  }
+
+  .try-url {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .base-url-input {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+    outline: none;
+  }
+
+  .base-url-input:focus { border-color: var(--teal); }
+
+  .try-body-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+    outline: none;
+    resize: vertical;
+    min-height: 80px;
+    margin-bottom: 10px;
+  }
+
+  .try-body-input:focus { border-color: var(--teal); }
+
+  .try-btn {
+    padding: 8px 20px;
+    background: var(--teal);
+    color: #0D1117;
+    border: none;
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  .try-btn:hover { opacity: 0.85; }
+
+  .try-response {
+    margin-top: 12px;
+    display: none;
+  }
+
+  .try-response.visible { display: block; }
+
+  .try-response-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .try-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 12px;
+  }
+
+  /* ── Info Banner ── */
+  .info-banner {
+    display: flex;
+    gap: 12px;
+    padding: 14px 16px;
+    background: rgba(0,212,170,0.06);
+    border: 1px solid rgba(0,212,170,0.2);
+    border-radius: 8px;
+    margin-bottom: 32px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .info-icon { color: var(--teal); font-size: 16px; flex-shrink: 0; }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  @media (max-width: 700px) {
+    aside { display: none; }
+    main  { padding: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Sidebar ── -->
+<aside>
+  <div class="sidebar-header">
+    <h1>⬡ API Gateway</h1>
+    <p>Node.js · Express · Redis</p>
+    <span class="version-badge">v1.0.0</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-group">
+      <div class="nav-group-label">Gateway</div>
+      <div class="nav-item active" onclick="scrollTo('health')">
+        <span class="nav-method m-get">GET</span>/health
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Auth</div>
+      <div class="nav-item" onclick="scrollTo('signup')">
+        <span class="nav-method m-post">POST</span>/signup
+      </div>
+      <div class="nav-item" onclick="scrollTo('login')">
+        <span class="nav-method m-post">POST</span>/login
+      </div>
+      <div class="nav-item" onclick="scrollTo('logout')">
+        <span class="nav-method m-post">POST</span>/logout
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Users</div>
+      <div class="nav-item" onclick="scrollTo('get-profile')">
+        <span class="nav-method m-get">GET</span>/users/profile
+      </div>
+      <div class="nav-item" onclick="scrollTo('put-profile')">
+        <span class="nav-method m-put">PUT</span>/users/profile
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Admin</div>
+      <div class="nav-item" onclick="scrollTo('admin-users')">
+        <span class="nav-method m-get">GET</span>/admin/users
+      </div>
+    </div>
+    <div class="nav-group">
+      <div class="nav-group-label">Products</div>
+      <div class="nav-item" onclick="scrollTo('get-products')">
+        <span class="nav-method m-get">GET</span>/products
+      </div>
+      <div class="nav-item" onclick="scrollTo('add-product')">
+        <span class="nav-method m-post">POST</span>/products/add
+      </div>
+      <div class="nav-item" onclick="scrollTo('put-product')">
+        <span class="nav-method m-put">PUT</span>/products/:id
+      </div>
+      <div class="nav-item" onclick="scrollTo('delete-product')">
+        <span class="nav-method m-delete">DEL</span>/products/:id
+      </div>
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="status-dot">
+      <span class="dot"></span>
+      <span>Gateway operational</span>
+    </div>
+  </div>
+</aside>
+
+<!-- ── Main ── -->
+<main>
+  <div class="page-header">
+    <h2>API Gateway Documentation</h2>
+    <p>A production-grade reverse proxy gateway with JWT authentication, Redis-backed rate limiting, circuit breaker resilience, and role-based access control.</p>
+    <div class="tech-pills">
+      <span class="pill">Node.js</span>
+      <span class="pill">Express</span>
+      <span class="pill">Redis Cloud</span>
+      <span class="pill">JWT</span>
+      <span class="pill">Opossum</span>
+      <span class="pill">Docker</span>
+      <span class="pill">MongoDB</span>
+    </div>
+  </div>
+
+  <div class="info-banner">
+    <span class="info-icon">ⓘ</span>
+    <span>All protected routes require a valid <code style="font-family:JetBrains Mono;color:var(--teal)">AccessToken</code> cookie. Login first to receive tokens. Admin routes additionally require the <code style="font-family:JetBrains Mono;color:var(--red)">role: "admin"</code> claim in your JWT.</span>
+  </div>
+
+  <!-- ── Gateway ── -->
+  <div class="section" id="section-gateway">
+    <div class="section-title">Gateway</div>
+
+    <div class="endpoint" id="health">
+      <div class="endpoint-header" onclick="toggle(this)">
+        <span class="method-badge badge-get">GET</span>
+        <span class="endpoint-path">/health</span>
+        <span class="endpoint-summary">Check health of all downstream services</span>
+        <span class="tag tag-open">public</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="body-section">
+          <div class="body-label">Description</div>
+          <p style="font-size:13px;color:var(--muted);line-height:1.7">Pings all three microservices in parallel and returns their health status. Returns <code style="font-family:JetBrains Mono;color:var(--teal)">200</code> if all healthy, <code style="font-family:JetBrains Mono;color:var(--red)">503</code> if any service is down.</p>
+        </div>
+        <div class="body-section">
+          <div class="body-label">Response — 200 OK</div>
+          <div class="code-block">
+<span class="key">{</span><br>
+&nbsp;&nbsp;<span class="key">"gateway"</span>: {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"status"</span>: <span class="str">"healthy"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"healthy"</span>: <span class="bool">true</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"uptime"</span>: <span class="num">3612.4</span><br>
+&nbsp;&nbsp;},<br>
+&nbsp;&nbsp;<span class="key">"services"</span>: {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"auth"</span>:    { <span class="key">"status"</span>: <span class="str">"healthy"</span>, <span class="key">"healthy"</span>: <span class="bool">true</span>, <span class="key">"circuit"</span>: <span class="str">"closed"</span> },<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"user"</span>:    { <span class="key">"status"</span>: <span class="str">"healthy"</span>, <span class="key">"healthy"</span>: <span class="bool">true</span>, <span class="key">"circuit"</span>: <span class="str">"closed"</span> },<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"product"</span>: { <span class="key">"status"</span>: <span class="str">"healthy"</span>, <span class="key">"healthy"</span>: <span class="bool">true</span>, <span class="key">"circuit"</span>: <span class="str">"closed"</span> }<br>
+&nbsp;&nbsp;}<br>
+<span class="key">}</span>
+          </div>
+        </div>
+        <div class="body-section">
+          <div class="body-label">Responses</div>
+          <div class="response-grid">
+            <div class="response-row">
+              <span class="status-code s-2xx">200</span>
+              <div><div class="response-desc">All services healthy</div></div>
+            </div>
+            <div class="response-row">
+              <span class="status-code s-5xx">503</span>
+              <div><div class="response-desc">One or more services unreachable</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="try-section">
+          <div class="try-label">Try it out</div>
+          <div class="try-url">
+            <input class="base-url-input" value="http://localhost:3000/health" id="url-health"/>
+            <button class="try-btn" onclick="tryIt('health','GET')">Execute</button>
+          </div>
+          <div class="try-response" id="res-health">
+            <div class="try-response-header">
+              <span>Response</span>
+              <span class="try-status" id="status-health"></span>
+            </div>
+            <div class="code-block" id="body-health" style="white-space:pre-wrap"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Auth ── -->
+  <div class="section" id="section-auth">
+    <div class="section-title">Auth</div>
+
+    <!-- signup -->
+    <div class="endpoint" id="signup">
+      <div class="endpoint-header" onclick="toggle(this)">
+        <span class="method-badge badge-post">POST</span>
+        <span class="endpoint-path">/signup</span>
+        <span class="endpoint-summary">Register a new user account</span>
+        <span class="tag tag-open">public</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="body-section">
+          <div class="body-label">Request Body</div>
+          <table class="params-table">
+            <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="param-name">Email</span></td>
+                <td><span class="param-type">string</span></td>
+                <td><span class="param-required">required</span></td>
+                <td style="color:var(--muted)">Valid email address</td>
+              </tr>
+              <tr>
+                <td><span class="param-name">Password</span></td>
+                <td><span class="param-type">string</span></td>
+                <td><span class="param-required">required</span></td>
+                <td style="color:var(--muted)">Min 6 characters, hashed with bcrypt</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="body-section">
+          <div class="body-label">Example Request</div>
+          <div class="code-block">
+<span class="key">{</span><br>
+&nbsp;&nbsp;<span class="key">"email"</span>:    <span class="str">"user@example.com"</span>,<br>
+&nbsp;&nbsp;<span class="key">"password"</span>: <span class="str">"securepass123"</span><br>
+<span class="key">}</span>
+          </div>
+        </div>
+        <div class="body-section">
+          <div class="body-label">Responses</div>
+          <div class="response-grid">
+            <div class="response-row">
+              <span class="status-code s-2xx">201</span>
+              <div><div class="response-desc">User created. AccessToken + RefreshToken set as httpOnly cookies.</div></div>
+            </div>
+            <div class="response-row">
+              <span class="status-code s-4xx">400</span>
+              <div><div class="response-desc">User already exists or missing fields</div></div>
+            </div>
+            <div class="response-row">
+              <span class="status-code s-4xx">429</span>
+              <div><div class="response-desc">Too many signup attempts (auth rate limiter)</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="try-section">
+          <div class="try-label">Try it out</div>
+          <div class="try-url">
+            <input class="base-url-input" value="http://localhost:3000/signup" id="url-signup"/>
+          </div>
+          <textarea class="try-body-input" id="body-input-signup">{"email":"test@example.com","password":"test123"}</textarea>
+          <button class="try-btn" onclick="tryIt('signup','POST')">Execute</button>
+          <div class="try-response" id="res-signup">
+            <div class="try-response-header"><span>Response</span><span class="try-status" id="status-signup"></span></div>
+            <div class="code-block" id="body-signup" style="white-space:pre-wrap"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- login -->
+    <div class="endpoint" id="login">
+      <div class="endpoint-header" onclick="toggle(this)">
+        <span class="method-badge badge-post">POST</span>
+        <span class="endpoint-path">/login</span>
+        <span class="endpoint-summary">Authenticate and receive JWT tokens</span>
+        <span class="tag tag-open">public</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="body-section">
+          <div class="body-label">Request Body</div>
+          <table class="params-table">
+            <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="param-name">Email</span></td>
+                <td><span class="param-type">string</span></td>
+                <td><span class="param-required">required</span></td>
+                <td style="color:var(--muted)">Registered email address</td>
+              </tr>
+              <tr>
+                <td><span class="param-name">Password</span></td>
+                <td><span class="param-type">string</span></td>
+                <td><span class="param-required">required</span></td>
+                <td style="color:var(--muted)">Account password</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="body-section">
+          <div class="body-label">Response — 200 OK</div>
+          <div class="code-block">
+<span class="comm">// Cookies set automatically (httpOnly, secure in production)</span><br>
+<span class="key">{</span><br>
+&nbsp;&nbsp;<span class="key">"success"</span>: <span class="bool">true</span>,<br>
+&nbsp;&nbsp;<span class="key">"message"</span>: <span class="str">"Login successful"</span><br>
+<span class="key">}</span>
+          </div>
+        </div>
+        <div class="body-section">
+          <div class="body-label">Responses</div>
+          <div class="response-grid">
+            <div class="response-row">
+              <span class="status-code s-2xx">200</span>
+              <div><div class="response-desc">Login successful. AccessToken (15m) + RefreshToken (7d) set as cookies.</div></div>
+            </div>
+            <div class="response-row">
+              <span class="status-code s-4xx">401</span>
+              <div><div class="response-desc">Invalid credentials</div></div>
+            </div>
+            <div class="response-row">
+              <span class="status-code s-4xx">429</span>
+              <div><div class="response-desc">Rate limited — max 10 attempts per 15 minutes</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="try-section">
+          <div class="try-label">Try it out</div>
+          <div class="try-url"><input class="base-url-input" value="http://localhost:3000/login" id="url-login"/></div>
+          <textarea class="try-body-input" id="body-input-login">{"email":"test@example.com","password":"test123"}</textarea>
+          <button class="try-btn" onclick="tryIt('login','POST')">Execute</button>
+          <div class="try-response" id="res-login">
+            <div class="try-response-header"><span>Response</span><span class="try-status" id="status-login"></span></div>
+            <div class="code-block" id="body-login" style="white-space:pre-wrap"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- logout -->
+    <div class="endpoint" id="logout">
+      <div class="endpoint-header" onclick="toggle(this)">
+        <span class="method-badge badge-post">POST</span>
+        <span class="endpoint-path">/logout</span>
+        <span class="endpoint-summary">Revoke refresh token and clear session</span>
+        <span class="tag tag-auth">auth</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="body-section">
+          <div class="body-label">Description</div>
+          <p style="font-size:13px;color:var(--muted);line-height:1.7">Blacklists the RefreshToken in Redis (7 day TTL) and clears both cookies. Even if someone has a stolen RefreshToken, it cannot be used after logout.</p>
+        </div>
+        <div class="body-section">
+          <div class="body-label">Responses</div>
+          <div class="response-grid">
+            <div class="response-row">
+              <span class="status-code s-2xx">200</span>
+              <div><div class="response-desc">Logged out. Both cookies cleared, token blacklisted in Redis.</div></div>
+            </div>
+            <div class="response-row">
+              <span class="status-code s-4xx">401</span>
+              <div><div class="response-desc">No RefreshToken cookie found</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="try-section">
+          <div class="try-label">Try it out</div>
+          <div class="try-url"><input class="base-url-input" value="http://localhost:3000/logout" id="url-logout"/></div>
+          <button class="try-btn" onclick="tryIt('logout','POST')">Execute</button>
+          <div class="try-response" id="res-logout">
+            <div class="try-response-header"><span>Response</span><span class="try-status" id="status-logout"></span></div>
+            <div class="code-block" id="body-logout" style="white-space:pre-wrap"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Users ── -->
+  <div class="section" id="section-users">
+    <div class="section-title">Users</div>
+
+    <div class="endpoint" id="get-profile">
+      <div class="endpoint-header" onclick="toggle(this)">
+        <span class="method-badge badge-get">GET</span>
+        <span class="endpoint-path">/users/profile</span>
+        <span class="endpoint-summary">Fetch the authenticated user's profile</span>
+        <span class="tag tag-auth">auth</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="body-section">
+          <div class="body-label">Description</div>
+          <p style="font-size:13px;color:var(--muted);line-height:1.7">Extracts the user ID from the verified JWT and fetches the profile from the User Service. The gateway injects <code style="font-family:JetBrains Mono;color:var(--blue)">x-user-id</code> and <code style="font-family:JetBrains Mono;color:var(--blue)">x-user-email</code> headers — the client never touches these.</p>
+        </div>
+        <div class="body-section">
+          <div class="body-label">Response — 200 OK</div>
+          <div class="code-block">
+<span class="key">{</span><br>
+&nbsp;&nbsp;<span class="key">"user"</span>: {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"_id"</span>:       <span class="str">"6a265e9e4fa38d9ee8897b91"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"Email"</span>:     <span class="str">"user@example.com"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"name"</span>:      <span class="str">"user"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"phone"</span>:     <span class="str">"2353294254"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"role"</span>:      <span class="str">"user"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<span class="key">"createdAt"</span>: <span class="str">"2025-06-01T10:00:00.000Z"</span><br>
+&nbsp;&nbsp;}<br>
+<span class="key">}</span>
+          </div>
+        </div>
+        <div class="body-section">
+          <div class="body-label">Responses</div>
+          <div class="response-grid">
+            <div class="response-row"><span class="status-code s-2xx">200</span><div><div class="response-desc">User profile (password excluded)</div></div></div>
+            <div class="response-row"><span class="status-code s-4xx">401</span><div><div class="response-desc">No token / expired token</div></div></div>
+            <div class="response-row"><span class="status-code s-4xx">404</span><div><div class="response-desc">User not found</div></div></div>
+            <div class="response-row"><span class="status-code s-5xx">503</span><div><div class="response-desc">User service unavailable (circuit open)</div></div></div>
+          </div>
+        </div>
+        <div class="try-section">
+          <div class="try-label">Try it out</div>
+          <div class="try-url"><input class="base-url-input" value="http://localhost:3000/users/profile" id="url-getprofile"/></div>
+          <button class="try-btn" onclick="tryIt('getprofile','GET')">Execute</button>
+          <div class="try-response" id="res-getprofile">
+            <div class="try-response-header"><span>Response</span><span class="try-status" id="status-getprofile"></span></div>
+            <div class="code-block" id="body-getprofile" style="white-space:pre-wrap"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="endpoint" id="put-profile">
+      <div class="endpoint-header" onclick="toggle(this)">
+        <span class="method-badge badge-put">PUT</span>
+        <span class="endpoint-path">/users/profile</span>
+        <span class="endpoint-summary">Update name and phone number</span>
+        <span class="tag tag-auth">auth</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="body-section">
+          <div class="body-label">Request Body</div>
+          <table class="params-table">
+            <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="param-name">name</span></td>
+                <td><span class="param-type">string</span></td>
+                <td><span class="param-optional">optional</span></td>
+                <td style="color:var(--muted)">Display name</td>
+              </tr>
+              <tr>
+                <td><span class="param-name">phone</span></td>
+                <td><span class="param-type">string</span></td>
+                <td><span class="param-optional">optional</span></td>
+                <td style="color:var(--muted)">Phone number</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="body-section">
+          <div class="body-label">Responses</div>
+          <div class="response-grid">
+            <div class="response-row"><span class="status-code s-2xx">200</span><div><div class="response-desc">Updated user profile</div></div></div>
+            <div class="response-row"><span class="status-code s-4xx">401</span><div><div class="response-desc">Unauthorized</div></div></div>
+          </div>
+        </div>
+        <div class="try-section">
+          <div class="try-label">Try it out</div>
+          <div class="try-url"><input class="base-url-input" value="http://localhost:3000/users/profile" id="url-putprofile"/></div>
+          <textarea class="try-body-input" id="body-input-putprofile">{"name":"abc","phone":"5823383385"}</textarea>
+          <button class="try-btn" onclick="tryIt('putprofile','PUT')">Execute</button>
+          <div class="try-response" id="res-putprofile">
+            <div class="try-response-header"><span>Response</span><span class="try-status" id="status-putprofile"></span></div>
+            <div class="code-block" id="body-putprofile" style="white-space:pre-wrap"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Admin ── -->
+  <div class="section" id="section-admin">
+    <div class="section-title">Admin</div>
+
+    <div class="endpoint" id="admin-users">
+      <div class="endpoint-header" onclick="toggle(this)">
+        <span class="method-badge badge-get">GET</span>
+        <span class="endpoint-path">/admin/users</span>
+        <span class="endpoint-summary">List all registered users</span>
+        <span class="tag tag-admin">admin only</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="body-section">
+          <div class="body-label">Description</div>
+          <p style="font-size:13px;color:var(--muted);line-height:1.7">Returns all users from the database. Requires <code style="font-family:JetBrains Mono;color:var(--red)">role: "admin"</code> in JWT payload. The gateway enforces this at the routing layer and the User Service double-checks via the <code style="font-family:JetBrains Mono;color:var(--blue)">x-role</code> header.</p>
+        </div>
+        <div class="body-section">
+          <div class="body-label">Response — 200 OK</div>
+          <div class="code-block">
+<span class="key">{</span><br>
+&nbsp;&nbsp;<span class="key">"users"</span>: [<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="key">"_id"</span>: <span class="str">"..."</span>, <span class="key">"Email"</span>: <span class="str">"user1@example.com"</span>, <span class="key">"role"</span>: <span class="str">"user"</span> },<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="key">"_id"</span>: <span class="str">"..."</span>, <span class="key">"Email"</span>: <span class="str">"admin@example.com"</span>, <span class="key">"role"</span>: <span class="str">"admin"</span> }<br>
+&nbsp;&nbsp;]<br>
+<span class="key">}</span>
+          </div>
+        </div>
+        <div class="body-section">
+          <div class="body-label">Responses</div>
+          <div class="response-grid">
+            <div class="response-row"><span class="status-code s-2xx">200</span><div><div class="response-desc">Array of all users (passwords excluded)</div></div></div>
+            <div class="response-row"><span class="status-code s-4xx">401</span><div><div class="response-desc">Not authenticated</div></div></div>
+            <div class="response-row"><span class="status-code s-4xx">403</span><div><div class="response-desc">Authenticated but not admin</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Products ── -->
+  <div class="section" id="section-products">
+    <div class="section-title">Products</div>
+
+    <div class="endpoint" id="get-products">
+      <div class="endpoint-header" onclick="toggle(this)">
+        <span class="method-badge badge-get">GET</span>
+        <span class="endpoint-path">/products</span>
+        <span class="endpoint-summary">List all products</span>
+        <span class="tag tag-auth">auth</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="body-section">
+          <div class="body-label">Response — 200 OK</div>
+          <div class="code-block">
+<span class="key">{</span><br>
+&nbsp;&nbsp;<span class="key">"service"</span>:  <span class="str">"products"</span>,<br>
+&nbsp;&nbsp;<span class="key">"products"</span>: [<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="key">"_id"</span>: <span class="str">"..."</span>, <span class="key">"title"</span>: <span class="str">"Product A"</span>, <span class="key">"price"</span>: <span class="num">299</span> },<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{ <span class="key">"_id"</span>: <span class="str">"..."</span>, <span class="key">"title"</span>: <span class="str">"Product B"</span>, <span class="key">"price"</span>: <span class="num">599</span> }<br>
+&nbsp;&nbsp;]<br>
+<span class="key">}</span>
+          </div>
+        </div>
+        <div class="body-section">
+          <div class="body-label">Responses</div>
+          <div class="response-grid">
+            <div class="response-row"><span class="status-code s-2xx">200</span><div><div class="response-desc">List of products</div></div></div>
+            <div class="response-row"><span class="status-code s-4xx">401</span><div><div class="response-desc">Unauthorized</div></div></div>
+            <div class="response-row"><span class="status-code s-5xx">503</span><div><div class="response-desc">Product service unavailable</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="endpoint" id="add-product">
+      <div class="endpoint-header" onclick="toggle(this)">
+        <span class="method-badge badge-post">POST</span>
+        <span class="endpoint-path">/products/add</span>
+        <span class="endpoint-summary">Add a new product</span>
+        <span class="tag tag-admin">admin only</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="body-section">
+          <div class="body-label">Request Body</div>
+          <table class="params-table">
+            <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="param-name">title</span></td>
+                <td><span class="param-type">string</span></td>
+                <td><span class="param-required">required</span></td>
+                <td style="color:var(--muted)">Product name</td>
+              </tr>
+              <tr>
+                <td><span class="param-name">price</span></td>
+                <td><span class="param-type">number</span></td>
+                <td><span class="param-required">required</span></td>
+                <td style="color:var(--muted)">Price in INR</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="body-section">
+          <div class="body-label">Responses</div>
+          <div class="response-grid">
+            <div class="response-row"><span class="status-code s-2xx">201</span><div><div class="response-desc">Product created</div></div></div>
+            <div class="response-row"><span class="status-code s-4xx">400</span><div><div class="response-desc">Missing title or price</div></div></div>
+            <div class="response-row"><span class="status-code s-4xx">403</span><div><div class="response-desc">Admin access required</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="endpoint" id="put-product">
+      <div class="endpoint-header" onclick="toggle(this)">
+        <span class="method-badge badge-put">PUT</span>
+        <span class="endpoint-path">/products/:id</span>
+        <span class="endpoint-summary">Update an existing product</span>
+        <span class="tag tag-admin">admin only</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="body-section">
+          <div class="body-label">Path Parameters</div>
+          <table class="params-table">
+            <thead><tr><th>Param</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="param-name">id</span></td>
+                <td><span class="param-type">string</span></td>
+                <td><span class="param-required">required</span></td>
+                <td style="color:var(--muted)">MongoDB ObjectId of the product</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="body-section">
+          <div class="body-label">Request Body</div>
+          <table class="params-table">
+            <thead><tr><th>Field</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="param-name">title</span></td>
+                <td><span class="param-type">string</span></td>
+                <td><span class="param-optional">optional</span></td>
+                <td style="color:var(--muted)">Updated product name</td>
+              </tr>
+              <tr>
+                <td><span class="param-name">price</span></td>
+                <td><span class="param-type">number</span></td>
+                <td><span class="param-optional">optional</span></td>
+                <td style="color:var(--muted)">Updated price</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="body-section">
+          <div class="body-label">Responses</div>
+          <div class="response-grid">
+            <div class="response-row"><span class="status-code s-2xx">200</span><div><div class="response-desc">Updated product</div></div></div>
+            <div class="response-row"><span class="status-code s-4xx">404</span><div><div class="response-desc">Product not found</div></div></div>
+            <div class="response-row"><span class="status-code s-4xx">403</span><div><div class="response-desc">Admin access required</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="endpoint" id="delete-product">
+      <div class="endpoint-header" onclick="toggle(this)">
+        <span class="method-badge badge-delete">DELETE</span>
+        <span class="endpoint-path">/products/:id</span>
+        <span class="endpoint-summary">Remove a product permanently</span>
+        <span class="tag tag-admin">admin only</span>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="endpoint-body">
+        <div class="body-section">
+          <div class="body-label">Path Parameters</div>
+          <table class="params-table">
+            <thead><tr><th>Param</th><th>Type</th><th>Required</th><th>Description</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="param-name">id</span></td>
+                <td><span class="param-type">string</span></td>
+                <td><span class="param-required">required</span></td>
+                <td style="color:var(--muted)">MongoDB ObjectId of the product to delete</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="body-section">
+          <div class="body-label">Responses</div>
+          <div class="response-grid">
+            <div class="response-row"><span class="status-code s-2xx">200</span><div><div class="response-desc">Product deleted successfully</div></div></div>
+            <div class="response-row"><span class="status-code s-4xx">404</span><div><div class="response-desc">Product not found</div></div></div>
+            <div class="response-row"><span class="status-code s-4xx">403</span><div><div class="response-desc">Admin access required</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  function toggle(header) {
+    const card = header.parentElement;
+    card.classList.toggle('open');
+    // update nav active
+    const id = card.id;
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const match = document.querySelector(`.nav-item[onclick="scrollTo('${id}')"]`);
+    if (match) match.classList.add('active');
+  }
+
+  function scrollTo(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (!el.classList.contains('open')) {
+      el.querySelector('.endpoint-header').click();
+    }
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+  }
+
+  async function tryIt(id, method) {
+    const urlInput = document.getElementById('url-' + id);
+    const bodyInput = document.getElementById('body-input-' + id);
+    const resEl    = document.getElementById('res-' + id);
+    const statusEl = document.getElementById('status-' + id);
+    const bodyEl   = document.getElementById('body-' + id);
+
+    if (!urlInput) return;
+    const url = urlInput.value.trim();
+
+    const opts = { method, credentials: 'include', headers: {} };
+    if (bodyInput && bodyInput.value.trim()) {
+      opts.headers['Content-Type'] = 'application/json';
+      opts.body = bodyInput.value.trim();
+    }
+
+    statusEl.textContent = 'Loading…';
+    statusEl.style.color = 'var(--muted)';
+    resEl.classList.add('visible');
+    bodyEl.textContent = '';
+
+    try {
+      const r = await fetch(url, opts);
+      const text = await r.text();
+      let pretty = text;
+      try { pretty = JSON.stringify(JSON.parse(text), null, 2); } catch {}
+
+      statusEl.textContent = r.status + ' ' + r.statusText;
+      statusEl.style.color = r.ok ? 'var(--teal)' : 'var(--red)';
+      bodyEl.textContent = pretty;
+    } catch (e) {
+      statusEl.textContent = 'Network Error';
+      statusEl.style.color = 'var(--red)';
+      bodyEl.textContent = e.message;
+    }
+  }
+</script>
+</body>
+</html>
