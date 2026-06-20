@@ -5,8 +5,531 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>API Gateway — Docs</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
-<link rel="stylesheet" href="docs.css">
 </head>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0D1117;
+    --surface:   #161B22;
+    --surface2:  #1C2330;
+    --border:    #30363D;
+    --text:      #E6EDF3;
+    --muted:     #8B949E;
+    --teal:      #00D4AA;
+    --blue:      #4B9EFF;
+    --orange:    #FF9F43;
+    --red:       #FF6B6B;
+    --purple:    #BC8CFF;
+    --yellow:    #F0C27F;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    min-height: 100vh;
+    font-size: 14px;
+  }
+
+  /* ── Sidebar ── */
+  aside {
+    width: 260px;
+    min-height: 100vh;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    flex-shrink: 0;
+  }
+
+  .sidebar-header {
+    padding: 24px 20px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .sidebar-header h1 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--teal);
+    letter-spacing: -0.3px;
+  }
+
+  .sidebar-header p {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 4px;
+  }
+
+  .version-badge {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 2px 8px;
+    background: rgba(0,212,170,0.12);
+    border: 1px solid rgba(0,212,170,0.3);
+    border-radius: 20px;
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--teal);
+  }
+
+  .sidebar-nav { padding: 12px 0; flex: 1; }
+
+  .nav-group { margin-bottom: 4px; }
+
+  .nav-group-label {
+    padding: 6px 20px;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--muted);
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 7px 20px;
+    cursor: pointer;
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .nav-item:hover { background: rgba(255,255,255,0.04); color: var(--text); }
+  .nav-item.active { background: rgba(0,212,170,0.08); border-left-color: var(--teal); color: var(--text); }
+
+  .nav-method {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 5px;
+    border-radius: 3px;
+    min-width: 38px;
+    text-align: center;
+  }
+
+  .m-get    { background: rgba(0,212,170,0.15);  color: var(--teal);   }
+  .m-post   { background: rgba(75,158,255,0.15); color: var(--blue);   }
+  .m-put    { background: rgba(255,159,67,0.15); color: var(--orange); }
+  .m-delete { background: rgba(255,107,107,0.15);color: var(--red);    }
+
+  .sidebar-footer {
+    padding: 16px 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  .status-dot {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--teal);
+    box-shadow: 0 0 6px var(--teal);
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%,100% { opacity: 1; }
+    50%      { opacity: 0.4; }
+  }
+
+  /* ── Main ── */
+  main {
+    flex: 1;
+    padding: 32px 40px;
+    max-width: 860px;
+  }
+
+  .page-header {
+    margin-bottom: 36px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .page-header h2 {
+    font-size: 26px;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+  }
+
+  .page-header p {
+    color: var(--muted);
+    margin-top: 8px;
+    line-height: 1.6;
+    font-size: 13px;
+  }
+
+  .tech-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .pill {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    border: 1px solid var(--border);
+    color: var(--muted);
+  }
+
+  /* ── Section ── */
+  .section { margin-bottom: 40px; }
+
+  .section-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--muted);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── Endpoint Card ── */
+  .endpoint {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 10px;
+    overflow: hidden;
+    transition: border-color 0.15s;
+  }
+
+  .endpoint:hover { border-color: #444D56; }
+  .endpoint.open  { border-color: #444D56; }
+
+  .endpoint-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .method-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 4px;
+    min-width: 60px;
+    text-align: center;
+    letter-spacing: 0.5px;
+  }
+
+  .badge-get    { background: rgba(0,212,170,0.15);  color: var(--teal);   border: 1px solid rgba(0,212,170,0.3);   }
+  .badge-post   { background: rgba(75,158,255,0.15); color: var(--blue);   border: 1px solid rgba(75,158,255,0.3);  }
+  .badge-put    { background: rgba(255,159,67,0.15); color: var(--orange); border: 1px solid rgba(255,159,67,0.3);  }
+  .badge-delete { background: rgba(255,107,107,0.15);color: var(--red);    border: 1px solid rgba(255,107,107,0.3); }
+
+  .endpoint-path {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+    flex: 1;
+  }
+
+  .endpoint-summary {
+    font-size: 12px;
+    color: var(--muted);
+    flex: 2;
+  }
+
+  .endpoint-tags {
+    display: flex;
+    gap: 6px;
+  }
+
+  .tag {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .tag-auth  { background: rgba(255,159,67,0.12);  color: var(--orange); border: 1px solid rgba(255,159,67,0.2);  }
+  .tag-admin { background: rgba(255,107,107,0.12); color: var(--red);    border: 1px solid rgba(255,107,107,0.2); }
+  .tag-open  { background: rgba(0,212,170,0.10);   color: var(--teal);   border: 1px solid rgba(0,212,170,0.2);   }
+
+  .chevron {
+    color: var(--muted);
+    font-size: 12px;
+    transition: transform 0.2s;
+  }
+
+  .endpoint.open .chevron { transform: rotate(90deg); }
+
+  /* ── Endpoint Body ── */
+  .endpoint-body {
+    display: none;
+    border-top: 1px solid var(--border);
+    padding: 20px 18px;
+    background: var(--surface2);
+  }
+
+  .endpoint.open .endpoint-body { display: block; }
+
+  .body-section { margin-bottom: 20px; }
+  .body-section:last-child { margin-bottom: 0; }
+
+  .body-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+
+  .code-block {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 14px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    overflow-x: auto;
+    position: relative;
+  }
+
+  .code-block .key   { color: var(--purple); }
+  .code-block .str   { color: var(--yellow); }
+  .code-block .num   { color: var(--teal);   }
+  .code-block .bool  { color: var(--orange); }
+  .code-block .comm  { color: var(--muted);  }
+
+  .response-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .response-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 10px 14px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+
+  .status-code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    min-width: 36px;
+  }
+
+  .s-2xx { color: var(--teal);   }
+  .s-4xx { color: var(--orange); }
+  .s-5xx { color: var(--red);    }
+
+  .response-desc { font-size: 12px; color: var(--muted); flex: 1; }
+  .response-body { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text); margin-top: 6px; }
+
+  .params-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+
+  .params-table th {
+    text-align: left;
+    padding: 8px 12px;
+    background: var(--bg);
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .params-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  .params-table tr:last-child td { border-bottom: none; }
+
+  .param-name {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--blue);
+    font-size: 12px;
+  }
+
+  .param-type {
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--purple);
+    font-size: 11px;
+  }
+
+  .param-required {
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    background: rgba(255,107,107,0.12);
+    color: var(--red);
+    border: 1px solid rgba(255,107,107,0.2);
+  }
+
+  .param-optional {
+    font-size: 10px;
+    padding: 1px 6px;
+    border-radius: 3px;
+    background: rgba(139,148,158,0.12);
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+
+  /* ── Try it out ── */
+  .try-section {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+  }
+
+  .try-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 10px;
+  }
+
+  .try-url {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .base-url-input {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+    outline: none;
+  }
+
+  .base-url-input:focus { border-color: var(--teal); }
+
+  .try-body-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text);
+    outline: none;
+    resize: vertical;
+    min-height: 80px;
+    margin-bottom: 10px;
+  }
+
+  .try-body-input:focus { border-color: var(--teal); }
+
+  .try-btn {
+    padding: 8px 20px;
+    background: var(--teal);
+    color: #0D1117;
+    border: none;
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+
+  .try-btn:hover { opacity: 0.85; }
+
+  .try-response {
+    margin-top: 12px;
+    display: none;
+  }
+
+  .try-response.visible { display: block; }
+
+  .try-response-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .try-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    font-size: 12px;
+  }
+
+  /* ── Info Banner ── */
+  .info-banner {
+    display: flex;
+    gap: 12px;
+    padding: 14px 16px;
+    background: rgba(0,212,170,0.06);
+    border: 1px solid rgba(0,212,170,0.2);
+    border-radius: 8px;
+    margin-bottom: 32px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .info-icon { color: var(--teal); font-size: 16px; flex-shrink: 0; }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  @media (max-width: 700px) {
+    aside { display: none; }
+    main  { padding: 20px; }
+  }
+</style>
 <body>
 
 <!-- ── Sidebar ── -->
@@ -656,6 +1179,64 @@
   </div>
 </main>
 
-<script src="docs.js"></script>
+<script>
+   function toggle(header) {
+    const card = header.parentElement;
+    card.classList.toggle('open');
+    // update nav active
+    const id = card.id;
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    const match = document.querySelector(`.nav-item[onclick="scrollTo('${id}')"]`);
+    if (match) match.classList.add('active');
+  }
+
+  function scrollTo(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (!el.classList.contains('open')) {
+      el.querySelector('.endpoint-header').click();
+    }
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    event.currentTarget.classList.add('active');
+  }
+
+  async function tryIt(id, method) {
+    const urlInput = document.getElementById('url-' + id);
+    const bodyInput = document.getElementById('body-input-' + id);
+    const resEl    = document.getElementById('res-' + id);
+    const statusEl = document.getElementById('status-' + id);
+    const bodyEl   = document.getElementById('body-' + id);
+
+    if (!urlInput) return;
+    const url = urlInput.value.trim();
+
+    const opts = { method, credentials: 'include', headers: {} };
+    if (bodyInput && bodyInput.value.trim()) {
+      opts.headers['Content-Type'] = 'application/json';
+      opts.body = bodyInput.value.trim();
+    }
+
+    statusEl.textContent = 'Loading…';
+    statusEl.style.color = 'var(--muted)';
+    resEl.classList.add('visible');
+    bodyEl.textContent = '';
+
+    try {
+      const r = await fetch(url, opts);
+      const text = await r.text();
+      let pretty = text;
+      try { pretty = JSON.stringify(JSON.parse(text), null, 2); } catch {}
+
+      statusEl.textContent = r.status + ' ' + r.statusText;
+      statusEl.style.color = r.ok ? 'var(--teal)' : 'var(--red)';
+      bodyEl.textContent = pretty;
+    } catch (e) {
+      statusEl.textContent = 'Network Error';
+      statusEl.style.color = 'var(--red)';
+      bodyEl.textContent = e.message;
+    }
+  }
+</script>
 </body>
 </html>
