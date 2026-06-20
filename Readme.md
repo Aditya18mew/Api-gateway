@@ -2,7 +2,6 @@
 
 A production-grade API Gateway built from scratch with Node.js and Express, sitting in front of three microservices and handling authentication, rate limiting, routing, and resilience.
 
-> Built as a portfolio project to demonstrate backend systems and microservices architecture — not a tutorial clone.
 
 ---
 
