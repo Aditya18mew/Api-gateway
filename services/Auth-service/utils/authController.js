@@ -5,7 +5,7 @@ const bcrypt=require("bcrypt")
 
 
 
-async function bcrypting(email,password){
+async function registerUser(email,password){
    try{
       const hashpassword=await bcrypt.hash(password,10)
       const newuser=new User({
@@ -22,7 +22,7 @@ async function bcrypting(email,password){
    }
 }
 
-async function comparepassword(email,password,hashpassword){
+async function loginUser(email,password,hashpassword){
   try{
  const match=await bcrypt.compare(password,hashpassword)
 
@@ -37,4 +37,4 @@ async function comparepassword(email,password,hashpassword){
   }
 }
 
-module.exports={bcrypting,comparepassword}
+module.exports={registerUser,loginUser}

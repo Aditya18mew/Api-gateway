@@ -1,7 +1,7 @@
 const express=require("express")
-const {bcrypting,comparepassword}=require("../utils/bcrypt")
+const {registerUser,loginUser}=require("../utils/authController")
 const {User}=require("../utils/mongoosedb")
-
+const isproduction=process.env.NODE_ENV=="production"
 
 
 const router=express.Router()
@@ -12,17 +12,17 @@ router.post("/signup",async (req,res)=>{
       const {email,password}=req.body
       const olduser=await User.findOne({Email:email})
       if(!olduser){
-        const {AccessToken,RefreshToken}=await bcrypting(email,password)
+        const {AccessToken,RefreshToken}=await registerUser(email,password)
          res.cookie("AccessToken",AccessToken,{
             maxAge:15*60*1000,
             httpOnly:true,
-            secure:false,
+            secure:isproduction,
             sameSite:"strict"
          })
          res.cookie("RefreshToken",RefreshToken,{
             maxAge:7*24*60*60*1000,
             httpOnly:true,
-            secure:false,
+            secure:isproduction,
             sameSite:"strict"
          })
         return  res.status(200).json({success:true,message:"sign-up successful"})
@@ -42,18 +42,18 @@ router.post("/login",async (req,res)=>{
       if(!user){
       return res.status(409).json({success:false,message:`${email} signup first`})
       }
-    const {success,AccessToken,RefreshToken}=await comparepassword(email,password,user.Password)
+    const {success,AccessToken,RefreshToken}=await loginUser(email,password,user.Password)
     if(success){
           res.cookie("AccessToken",AccessToken,{
             maxAge:15*60*1000,
             httpOnly:true,
-            secure:false,
+            secure:isproduction,
             sameSite:"strict"
          })
           res.cookie("RefreshToken",RefreshToken,{
             maxAge:7*24*60*60*1000,
             httpOnly:true,
-            secure:false,
+            secure:isproduction,
             sameSite:"strict"
          })
          
