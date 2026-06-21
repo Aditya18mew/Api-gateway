@@ -37,7 +37,8 @@ app.get("/products",Internalcheck,async (req,res)=>{
         service:"products",
         products:products
     })
-    }catch{
+    }catch(err){
+      console.error(err)
       return res.status(500).json({Error:"failed to fetch products"})
     }
 })
@@ -50,7 +51,8 @@ app.get("/products/:id",Internalcheck,async (req,res)=>{
         service:"product",
         product:product
     })
-    }catch{
+    }catch(err){
+      console.error(err)
      return  res.status(500).json({Error:"failed to fetch products"})
     }
 })

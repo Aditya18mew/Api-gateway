@@ -16,9 +16,10 @@ async function registerUser(email,password){
     
     const {AccessToken,RefreshToken}=await generatejwt(email)
 
-    return {AccessToken:AccessToken,RefreshToken:RefreshToken}
+    return {success:true,AccessToken:AccessToken,RefreshToken:RefreshToken}
    }catch(err){
-    console.log(err)
+    console.log("Signup error", err.message)
+    return {success:false,err:err.message}
    }
 }
 
@@ -26,14 +27,15 @@ async function loginUser(email,password,hashpassword){
   try{
  const match=await bcrypt.compare(password,hashpassword)
 
- if(!match) return {success:false,AccessToken:null,RefreshToken:null}
+ if(!match) return {success:false,reason: "invalid_credentials",AccessToken:null,RefreshToken:null}
 
  const {AccessToken,RefreshToken}=await generatejwt(email)
 
- return {success:true,AccessToken:AccessToken,RefreshToken:RefreshToken}
+ return {success:true, reason:null ,AccessToken:AccessToken, RefreshToken:RefreshToken}
 
   }catch(err){
-    console.log(err)
+    console.log("Signup error", err.message)
+    return {success:false,reason:"server error",AccessToken:null,RefreshToken:null}
   }
 }
 
