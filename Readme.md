@@ -2,8 +2,16 @@
 
 A production-grade API Gateway built from scratch with Node.js and Express, sitting in front of three microservices and handling authentication, rate limiting, routing, and resilience.
 
-
 ---
+
+## Live Demo
+
+- Gateway: https://api-gateway-jwtr.onrender.com
+- API Docs: https://api-gateway-jwtr.onrender.com/docs
+- Health: https://api-gateway-jwtr.onrender.com/health
+
+> Note: hosted on Render's free tier — services spin down after 15 min of inactivity, so the first request may take 30-60s to wake up. Subsequent requests are fast.
+
 
 ## Architecture
  ![Architecture](docs/architecture.png)
