@@ -14,7 +14,8 @@ const limiter=ratelimit({
     },
     skip: (req) => req.path.startsWith("/login") || req.path.startsWith("/signup"),
     store:new RedisStore({
-        sendCommand:(...args)=>client.sendCommand(args)
+        sendCommand:(...args)=>client.sendCommand(args),
+        prefix:'gateway:rl:global:'
     })
 })
 
@@ -28,7 +29,8 @@ const authlimiter=ratelimit({
         message:"Too many requests"
     },
     store:new RedisStore({
-        sendCommand:(...args)=>client.sendCommand(args)
+        sendCommand:(...args)=>client.sendCommand(args),
+        prefix:'gateway:rl:auth:'
     })
 })
 
